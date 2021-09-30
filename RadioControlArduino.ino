@@ -48,7 +48,7 @@ void loop() {
   int valmotor;
   
   valservo = IBus.readChannel(0); // get latest value for servo channel 1
-  valmotor = iBus.readChanlle(2); // get latest value for motor channel 3
+  valmotor = IBus.readChannel(2); // get latest value for motor channel 3
   
   if (savevalservo != valservo) {
     savevalservo = valservo;    
