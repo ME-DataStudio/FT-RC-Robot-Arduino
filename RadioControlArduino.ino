@@ -1,7 +1,5 @@
 #include <IBusBM.h>
 #include <Servo.h>
-
-
 /*
   Translate iBUS signal to servo and motor.
   
@@ -18,17 +16,28 @@
   - RX connected to the iBUS servo pin (disconnect during programming on MEGA, UNO and micro boards!)
   - TX left open or for Arduino boards without an onboard USB controler - connect to an 
     USB/Serial converter to display debug information on your PC (set baud rate to 115200).  
-
+  
+  Combination with DC motor drive via H-Bridge from: https://www.tutorialspoint.com/arduino/arduino_dc_motor.htm
 */
 
 IBusBM IBus; // IBus object
 Servo myservo;  // create servo object to control a servo
-Servo mymotor;  // create motor object to be controlled with PWM on H-bridge
+
+const int pwmDC = 2 ; //initializing pin 2 as pwm for DC motor
+const int pwmServo = 11; //initializing pin 11 as pwm for Servo
+const int in_1 = 8 ;
+const int in_2 = 9 ;
+//For providing logic to L298 IC to choose the direction of the DC motor
+
 
 void setup() {
   IBus.begin(Serial);    // iBUS connected to Serial0 - change to Serial1 or Serial2 port when required
-  myservo.attach(9);  // attaches the servo on pin 9 to the servo object
-  mymotor.attach(11);
+  
+  myservo.attach(pwmServo);  // attaches the servo on pin 9 to the servo object
+  
+  pinMode(pwmDC,OUTPUT) ; //we have to set PWM pin as output
+  pinMode(in_1,OUTPUT) ; //Logic pins are also set as output
+  pinMode(in_2,OUTPUT) ;
 }
 
 int savevalservo=0;
@@ -48,9 +57,29 @@ void loop() {
   
    if (savevalmotor != valmotor) {
     savevalmotor = valmotor;    
-    mymotor.writeMicroseconds(valmotor);   // sets the servo position 
+    // motor direction and speed
   }
   
-  delay(100);
+ //For Clock wise motion , in_1 = High , in_2 = Low
+   digitalWrite(in_1,HIGH) ;
+   digitalWrite(in_2,LOW) ;
+   analogWrite(pwmDC,255) ;
+   /* setting pwm of the motor to 255 we can change the speed of rotation
+   by changing pwm input but we are only using arduino so we are using highest
+   value to driver the motor */
+   //Clockwise for 3 secs
+   delay(3000) ;
+   //For brake
+   digitalWrite(in_1,HIGH) ;
+   digitalWrite(in_2,HIGH) ;
+   delay(1000) ;
+   //For Anti Clock-wise motion - IN_1 = LOW , IN_2 = HIGH
+   digitalWrite(in_1,LOW) ;
+   digitalWrite(in_2,HIGH) ;
+   delay(3000) ;
+   //For brake
+   digitalWrite(in_1,HIGH) ;
+   digitalWrite(in_2,HIGH) ;
+   delay(1000) ;
 }
 
