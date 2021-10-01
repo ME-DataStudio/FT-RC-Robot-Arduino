@@ -23,7 +23,8 @@
 IBusBM IBus; // IBus object
 Servo myservo;  // create servo object to control a servo
 
-const int pwmDC = 2 ; //initializing pin 2 as pwm for DC motor
+// Pins 3, 5, 6, 9, 10, 11 on Arduino UNO are PWM capable
+const int pwmDC = 3 ; //initializing pin 3 as pwm for DC motor
 const int pwmServo = 11; //initializing pin 11 as pwm for Servo
 const int in_1 = 8 ;
 const int in_2 = 9 ;
@@ -57,13 +58,14 @@ void loop() {
   
    if (savevalmotor != valmotor) {
     savevalmotor = valmotor;    
+    if valmotor
     // motor direction and speed
   }
   
  //For Clock wise motion , in_1 = High , in_2 = Low
    digitalWrite(in_1,HIGH) ;
    digitalWrite(in_2,LOW) ;
-   analogWrite(pwmDC,255) ;
+   analogWrite(pwmDC,255) ; //my motor can be used from 100 - 255 from 8.4V supply
    /* setting pwm of the motor to 255 we can change the speed of rotation
    by changing pwm input but we are only using arduino so we are using highest
    value to driver the motor */
