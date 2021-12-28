@@ -4,5 +4,4 @@ Building a self-driving car from FischerTechnik with optional Radio Control from
 The arduino Uno as a controlling unit.  
 The Raspberry Pi as the self-driving unit with pi-camera.
 
-https://github.com/ME-DataStudio/FT-RC-Robot-Arduino/blob/main/flysky%20pinout.jpeg?raw=true![image](https://user-images.githubusercontent.com/75776348/147547441-8f085dc9-0761-4f6a-9096-c93fe4d8bf7a.png)
-
+FlySky wiring: https://user-images.githubusercontent.com/75776348/147547649-8ebbf140-cc0b-45f6-82e3-95335791ad79.png
