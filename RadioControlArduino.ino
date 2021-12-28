@@ -9,9 +9,7 @@
  
   For boards where serial0 is connected to the onboard USB port (such as MEGA, UNO and micro) you need
   to disconnect the RX line from the receiver during programming. 
-
   Please use 5V boards only.
-
   Serial port RX/TX connected as follows:
   - RX connected to the iBUS servo pin (disconnect during programming on MEGA, UNO and micro boards!)
   - TX left open or for Arduino boards without an onboard USB controler - connect to an 
@@ -27,22 +25,16 @@ IBusBM IBus; // IBus object
 Servo myservo;  // create servo object to control a servo
 
 // Pins 3, 5, 6, 9, 10, 11 on Arduino UNO are PWM capable
-const int pwmDC = 3 ; //initializing pin 3 as pwm for DC motor
 const int pwmServo = 11; //initializing pin 11 as pwm for Servo
 //For providing logic to L298 IC to choose the direction of the DC motor
-const int in_1 = 8 ;
-const int in_2 = 9 ;
+const int fwdPin = 5; //Logic level output to the H-Bridge (Forward)
+const int revPin = 6; //Another logic level output to the H-Bridge (Reverse)
 
 
 
 void setup() {
    IBus.begin(Serial);    // iBUS connected to Serial0 - change to Serial1 or Serial2 port when required
-   mymotor.attach(pwmDC); // speed control for DC motor
    myservo.attach(pwmServo);  // attaches the servo on pin 9 to the servo object
-  
-   pinMode(pwmDC,OUTPUT) ; //we have to set PWM pin as output
-   pinMode(in_1,OUTPUT) ; //Logic pins are also set as output
-   pinMode(in_2,OUTPUT) ;
 }
 
 int savevalservo=0;
@@ -51,6 +43,7 @@ int savevalmotor=0;
 void loop() {
    int valservo;
    int valmotor;
+   int valwrite;
   
    valservo = IBus.readChannel(0); // get latest value for servo channel 1
    valmotor = IBus.readChannel(2); // get latest value for motor channel 3
@@ -62,26 +55,17 @@ void loop() {
   
    if (savevalmotor != valmotor) {
       savevalmotor = valmotor;   
-      switch  (valmotor) {
-         case < 1490 :   
-            val = map(valmotor, 1000, 1500, 20000, 0);   
-            digitalWrite(in_1,HIGH) ;
-            digitalWrite(in_2,LOW) ;
-            mymotor.writeMicroseconds(val);
-            break;
-        case valmotor > 1510 :
-           val = map(valmotor, 1510, 2000, 0, 20000);
-           digitalWrite(in_1,LOW) ;
-           digitalWrite(in_2,HIGH) ;
-           mymotor.writeMicroseconds(val);
-           break;
-        default:
-          val=0;
-          mymotor.writeMicroseconds(val);
-          digitalWrite(in_1,HIGH) ;
-          digitalWrite(in_2,HIGH) ;
+      if (valmotor < 1490) {   
+            valwrite = map(valmotor, 1000, 1490, 255, 50); 
+            analogWrite(fwdPin, valwrite);   
+      }
+      else if (valmotor > 1510) {
+           valwrite = map(valmotor, 1510, 2000, 50, 255);
+           analogWrite(revPin, valwrite);
+      } else {
+          valwrite=0; //don't know if this is realy necessary can maybe be omitted.
+          analogWrite(fwdPin, valwrite);
+          analogWrite(revPin, valwrite);
       }
    }
 }
- 
-
