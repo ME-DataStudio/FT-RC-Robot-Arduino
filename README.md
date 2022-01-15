@@ -9,3 +9,7 @@ FlySky pinout (s = signal, v+ = power, g = ground): https://user-images.githubus
 Via https://bc-robotics.com/tutorials/controlling-dc-motor-arduino/ the H-bridge connection between Arduino and the FT motor.  
   
 Power source is FT battery 8,4v 1500mAH.
+
+KiCAD schematics:
+![image](https://user-images.githubusercontent.com/75776348/149619044-560eb3e3-c31f-4fb8-8c03-33bb12e7bcb9.png)
+
